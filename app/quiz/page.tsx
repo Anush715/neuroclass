@@ -1,4 +1,5 @@
 "use client"
+import Link from "next/link"
 import { useState } from "react"
 
 const questions = [
@@ -86,9 +87,9 @@ export default function Quiz() {
           <div className="text-6xl mb-4">{resultMap[result].emoji}</div>
           <h2 className="text-2xl font-bold text-green-700 mb-2">You are a {resultMap[result].label}!</h2>
           <p className="text-gray-500 text-sm mb-6">{resultMap[result].desc}</p>
-          <button className="bg-green-700 text-white px-8 py-3 rounded-full font-medium hover:bg-green-800 transition">
-            Start Learning Your Way →
-          </button>
+          <Link href="/learn" className="bg-green-700 text-white px-8 py-3 rounded-full font-medium hover:bg-green-800 transition">
+  Start Learning Your Way →
+</Link>
         </div>
       )}
     </main>

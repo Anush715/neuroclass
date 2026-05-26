@@ -7,10 +7,11 @@ export default function Home() {
       <nav className="flex items-center justify-between px-10 py-5 border-b border-gray-100">
         <h1 className="text-2xl font-bold text-green-700">🧠 NeuroClass</h1>
         <div className="flex gap-6 text-gray-500 text-sm font-medium">
-          <a href="#" className="hover:text-green-700">Home</a>
-          <a href="#" className="hover:text-green-700">How it works</a>
-          <a href="#" className="hover:text-green-700">Get Started</a>
-        </div>
+  <Link href="/" className="hover:text-green-700">Home</Link>
+  <Link href="/quiz" className="hover:text-green-700">Take Quiz</Link>
+  <Link href="/learn" className="hover:text-green-700">Start Learning</Link>
+  <Link href="/teacher" className="hover:text-green-700">For Teachers</Link>
+</div>
       </nav>
 
       {/* Hero Section */}
@@ -26,7 +27,7 @@ export default function Home() {
           NeuroClass transforms any study material into your perfect learning format — whether you have dyslexia, ADHD, or simply learn better through visuals or audio.
         </p>
         <div className="flex gap-4">
-          <Link href="/quiz" className="bg-green-700 text-white px-8 py-3 rounded-full font-medium hover:bg-green-800 transition">
+          <Link href="/learn" className="bg-green-700 text-white px-8 py-3 rounded-full font-medium hover:bg-green-800 transition">
   Start Learning
 </Link>
           <button className="border border-gray-200 text-gray-600 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition">
