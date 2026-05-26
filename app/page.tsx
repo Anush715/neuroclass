@@ -6,11 +6,13 @@ export default function Home() {
       {/* Navbar */}
       <nav className="flex items-center justify-between px-10 py-5 border-b border-gray-100">
         <h1 className="text-2xl font-bold text-green-700">🧠 NeuroClass</h1>
-        <div className="flex gap-6 text-gray-500 text-sm font-medium">
+       <div className="flex gap-6 text-gray-500 text-sm font-medium">
   <Link href="/" className="hover:text-green-700">Home</Link>
   <Link href="/quiz" className="hover:text-green-700">Take Quiz</Link>
   <Link href="/learn" className="hover:text-green-700">Start Learning</Link>
+  <Link href="/progress" className="hover:text-green-700">My Progress</Link>
   <Link href="/teacher" className="hover:text-green-700">For Teachers</Link>
+  <Link href="/parent" className="hover:text-green-700">For Parents</Link>
 </div>
       </nav>
 
