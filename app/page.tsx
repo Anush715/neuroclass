@@ -32,9 +32,9 @@ export default function Home() {
           <Link href="/learn" className="bg-green-700 text-white px-8 py-3 rounded-full font-medium hover:bg-green-800 transition">
   Start Learning
 </Link>
-          <button className="border border-gray-200 text-gray-600 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition">
-            For Teachers
-          </button>
+          <Link href="/teacher" className="border border-gray-200 text-gray-600 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition">
+  For Teachers
+</Link>
         </div>
       </section>
 
