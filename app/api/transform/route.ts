@@ -10,14 +10,16 @@ export async function POST(req: NextRequest) {
     adhd: `Transform the following study material into ADHD-friendly micro lessons. Break it into very short sections of 2-3 sentences max. Add a quick summary after each section. Use encouraging language and keep energy high.\n\n${content}`,
   }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "HTTP-Referer": "https://neuroclass-two.vercel.app",
+      "X-Title": "NeuroClass",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "mistralai/mistral-7b-instruct:free",
       messages: [
         {
           role: "user",
