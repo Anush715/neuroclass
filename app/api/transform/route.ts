@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         "X-Title": "NeuroClass",
       },
       body: JSON.stringify({
-        model: "mistralai/mistral-7b-instruct:free",
+        model: "meta-llama/llama-3.2-3b-instruct:free",
         messages: [{ role: "user", content: prompts[mode] }],
       }),
     })
