@@ -1,42 +1,40 @@
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
-  const { content, mode } = await req.json()
+  try {
+    const { content, mode } = await req.json()
 
-  const prompts: Record<string, string> = {
-    visual: `Transform the following study material into a structured visual learning format. Break it into clear sections with headers, bullet points, and suggest where diagrams or flowcharts would help. Make it easy to scan visually.\n\n${content}`,
-    auditory: `Transform the following study material into a podcast-style narration script. Write it in a conversational tone as if a friendly teacher is explaining it out loud. Use natural spoken language.\n\n${content}`,
-    dyslexia: `Transform the following study material into dyslexia-friendly format. Use very short sentences. Break into tiny paragraphs. Use simple words. Add lots of white space by using line breaks. Avoid walls of text.\n\n${content}`,
-    adhd: `Transform the following study material into ADHD-friendly micro lessons. Break it into very short sections of 2-3 sentences max. Add a quick summary after each section. Use encouraging language and keep energy high.\n\n${content}`,
+    const prompts: Record<string, string> = {
+      visual: `Transform the following study material into a structured visual learning format with headers and bullet points:\n\n${content}`,
+      auditory: `Transform the following study material into a conversational podcast-style narration:\n\n${content}`,
+      dyslexia: `Transform the following study material into dyslexia-friendly format with very short sentences and simple words:\n\n${content}`,
+      adhd: `Transform the following study material into ADHD-friendly micro lessons of 2-3 sentences each:\n\n${content}`,
+    }
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "https://neuroclass-two.vercel.app",
+        "X-Title": "NeuroClass",
+      },
+      body: JSON.stringify({
+        model: "mistralai/mistral-7b-instruct:free",
+        messages: [{ role: "user", content: prompts[mode] }],
+      }),
+    })
+
+    const data = await response.json()
+    
+    if (data.error) {
+      return NextResponse.json({ result: "API Error: " + data.error.message }, { status: 200 })
+    }
+
+    const result = data.choices?.[0]?.message?.content || "No response received"
+    return NextResponse.json({ result })
+
+  } catch (error) {
+    return NextResponse.json({ result: "Something went wrong. Please try again." }, { status: 200 })
   }
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-      "HTTP-Referer": "https://neuroclass-two.vercel.app",
-      "X-Title": "NeuroClass",
-    },
-    body: JSON.stringify({
-      model: "mistralai/mistral-7b-instruct:free",
-      messages: [
-        {
-          role: "user",
-          content: prompts[mode],
-        },
-      ],
-      max_tokens: 1000,
-    }),
-  })
-
-  const data = await response.json()
-
-    if (!data.choices || !data.choices[0]) {
-    return NextResponse.json({ error: JSON.stringify(data) }, { status: 500 })
-  }
-  
-  const result = data.choices[0].message.content
-
-  return NextResponse.json({ result })
 }
