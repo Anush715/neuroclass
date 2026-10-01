@@ -31,6 +31,11 @@ export async function POST(req: NextRequest) {
   })
 
   const data = await response.json()
+
+    if (!data.choices || !data.choices[0]) {
+    return NextResponse.json({ error: JSON.stringify(data) }, { status: 500 })
+  }
+  
   const result = data.choices[0].message.content
 
   return NextResponse.json({ result })
