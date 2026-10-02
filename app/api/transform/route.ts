@@ -5,10 +5,10 @@ export async function POST(req: NextRequest) {
     const { content, mode } = await req.json()
 
     const prompts: Record<string, string> = {
-      visual: `Transform the following study material into a structured visual learning format with clear headers and bullet points:\n\n${content}`,
-      auditory: `Transform the following study material into a conversational podcast-style narration as if a friendly teacher is explaining it:\n\n${content}`,
-      dyslexia: `Transform the following study material into dyslexia-friendly format with very short sentences, simple words and lots of spacing:\n\n${content}`,
-      adhd: `Transform the following study material into ADHD-friendly micro lessons of 2-3 sentences each with summaries:\n\n${content}`,
+      visual: `Transform this into a structured visual learning format with headers and bullet points:\n\n${content}`,
+      auditory: `Transform this into a conversational podcast-style narration:\n\n${content}`,
+      dyslexia: `Transform this into dyslexia-friendly format with very short sentences and simple words:\n\n${content}`,
+      adhd: `Transform this into ADHD-friendly micro lessons of 2-3 sentences each:\n\n${content}`,
     }
 
     const response = await fetch(
@@ -17,16 +17,21 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompts[mode] }] }],
+          contents: [{ role: "user", parts: [{ text: prompts[mode] }] }]
         }),
       }
     )
 
-    const data = await response.json()
-    const result = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response received"
+    const text = await response.text()
+    console.log("Gemini raw response:", text)
+    
+    const data = JSON.parse(text)
+    const result = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received"
+    
     return NextResponse.json({ result })
 
-  } catch (error) {
-    return NextResponse.json({ result: "Something went wrong. Please try again." }, { status: 200 })
+  } catch (error: any) {
+    console.log("Error:", error.message)
+    return NextResponse.json({ result: "Error: " + error.message }, { status: 200 })
   }
 }
