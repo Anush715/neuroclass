@@ -5,29 +5,29 @@ export async function POST(req: NextRequest) {
     const { content, mode } = await req.json()
 
     const prompts: Record<string, string> = {
-      visual: `Transform this into a structured visual learning format with headers and bullet points:\n\n${content}`,
-      auditory: `Transform this into a conversational podcast-style narration:\n\n${content}`,
-      dyslexia: `Transform this into dyslexia-friendly format with very short sentences and simple words:\n\n${content}`,
-      adhd: `Transform this into ADHD-friendly micro lessons of 2-3 sentences each:\n\n${content}`,
+      visual: `Transform this into a structured visual learning format with clear headers and bullet points:\n\n${content}`,
+      auditory: `Transform this into a conversational podcast-style narration as if a friendly teacher is explaining:\n\n${content}`,
+      dyslexia: `Transform this into dyslexia-friendly format with very short sentences, simple words and spacing:\n\n${content}`,
+      adhd: `Transform this into ADHD-friendly micro lessons of 2-3 sentences each with a summary after each:\n\n${content}`,
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompts[mode] }] }]
-        }),
-      }
-    )
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "llama3-8b-8192",
+        messages: [{ role: "user", content: prompts[mode] }],
+        max_tokens: 1000,
+      }),
+    })
 
-    const text = await response.text()
-    console.log("Gemini raw response:", text)
-    
-    const data = JSON.parse(text)
-    const result = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response received"
-    
+    const data = await response.json()
+    console.log("Groq response:", JSON.stringify(data))
+
+    const result = data?.choices?.[0]?.message?.content || "No response received"
     return NextResponse.json({ result })
 
   } catch (error: any) {
