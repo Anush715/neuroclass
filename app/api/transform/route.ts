@@ -11,23 +11,25 @@ export async function POST(req: NextRequest) {
       adhd: `Transform this into ADHD-friendly micro lessons of 2-3 sentences each with a summary after each:\n\n${content}`,
     }
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "meta-llama/llama-4-scout-17b-16e-instruct",
-        messages: [{ role: "user", content: prompts[mode] }],
-        max_tokens: 1000,
-      }),
-    })
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs: prompts[mode],
+          parameters: { max_new_tokens: 800, return_full_text: false }
+        }),
+      }
+    )
 
     const data = await response.json()
-    console.log("Groq response:", JSON.stringify(data))
+    console.log("HF response:", JSON.stringify(data))
 
-    const result = data?.choices?.[0]?.message?.content || "No response received"
+    const result = data?.[0]?.generated_text || "No response received"
     return NextResponse.json({ result })
 
   } catch (error: any) {
