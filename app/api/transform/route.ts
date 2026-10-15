@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+      "https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.3/v1/chat/completions",
       {
         method: "POST",
         headers: {
@@ -20,8 +20,9 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputs: prompts[mode],
-          parameters: { max_new_tokens: 800, return_full_text: false }
+          model: "mistralai/Mistral-7B-Instruct-v0.3",
+          messages: [{ role: "user", content: prompts[mode] }],
+          max_tokens: 800,
         }),
       }
     )
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
     const data = await response.json()
     console.log("HF response:", JSON.stringify(data))
 
-    const result = data?.[0]?.generated_text || "No response received"
+    const result = data?.choices?.[0]?.message?.content || "No response received"
     return NextResponse.json({ result })
 
   } catch (error: any) {
