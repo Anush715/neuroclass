@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await fetch(
-      "https://router.huggingface.co/hf-inference/models/mistralai/Mistral-7B-Instruct-v0.3/v1/chat/completions",
+      "https://router.huggingface.co/hf-inference/models/HuggingFaceH4/zephyr-7b-beta/v1/chat/completions",
       {
         method: "POST",
         headers: {
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "mistralai/Mistral-7B-Instruct-v0.3",
+          model: "HuggingFaceH4/zephyr-7b-beta",
           messages: [{ role: "user", content: prompts[mode] }],
           max_tokens: 800,
         }),
