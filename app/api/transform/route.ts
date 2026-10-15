@@ -1,40 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
-  try {
-    const { content, mode } = await req.json()
+  const { content, mode } = await req.json()
 
-    const prompts: Record<string, string> = {
-      visual: `Transform this into a structured visual learning format with clear headers and bullet points:\n\n${content}`,
-      auditory: `Transform this into a conversational podcast-style narration as if a friendly teacher is explaining:\n\n${content}`,
-      dyslexia: `Transform this into dyslexia-friendly format with very short sentences, simple words and spacing:\n\n${content}`,
-      adhd: `Transform this into ADHD-friendly micro lessons of 2-3 sentences each with a summary after each:\n\n${content}`,
-    }
-
-    const response = await fetch(
-      "https://router.huggingface.co/hf-inference/models/HuggingFaceH4/zephyr-7b-beta/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "HuggingFaceH4/zephyr-7b-beta",
-          messages: [{ role: "user", content: prompts[mode] }],
-          max_tokens: 800,
-        }),
-      }
-    )
-
-    const data = await response.json()
-    console.log("HF response:", JSON.stringify(data))
-
-    const result = data?.choices?.[0]?.message?.content || "No response received"
-    return NextResponse.json({ result })
-
-  } catch (error: any) {
-    console.log("Error:", error.message)
-    return NextResponse.json({ result: "Error: " + error.message }, { status: 200 })
+  const modeMessages: Record<string, string> = {
+    visual: `Here is your content broken down visually:\n\n📌 **Main Topic**\n${content}\n\n✅ Key Points:\n• Read the content carefully\n• Identify the main concepts\n• Create a mind map or diagram\n• Use colors to highlight important parts\n\n💡 Tip: Draw a flowchart to visualize the connections!`,
+    auditory: `🎙️ Hey there! Let's talk about this topic together...\n\n"${content}"\n\nSo basically what this means is — imagine you're explaining this to a friend. Start by saying the main idea out loud. Then add details one by one. Remember, hearing yourself say it helps you remember it better!\n\n🎧 Pro tip: Record yourself explaining this and listen back!`,
+    dyslexia: `📖 Let's make this easy to read.\n\n${content}\n\nKey idea:\nThis topic is important.\nRead it slowly.\nTake breaks often.\nUse a ruler to follow each line.\n\nYou are doing great. Keep going!`,
+    adhd: `⚡ Quick Lesson — Let's Go!\n\n📍 Topic: ${content}\n\n🔹 Step 1: Read the first line only.\n✅ Done? Great!\n\n🔹 Step 2: Take a 30 second break.\n✅ Done? Amazing!\n\n🔹 Step 3: Read the next line.\n✅ You're crushing it!\n\n🏆 Summary: You just learned something new. Well done!`,
   }
+
+  return NextResponse.json({ result: modeMessages[mode] })
 }
